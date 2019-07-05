@@ -7,9 +7,9 @@ database:  # postgres 的连接数据
   type: postgres
 sassserver: # 从saas获取appkey appsecret
   port: ":8082"
-  host: "http://47.244.248.121:8092"
-  appKey: "TSPAFtyIwONW3UZkrl9Ds5uM"
-  appSecret: "xfNVhvaCcYBS2iFSFroVRgX5Mly8Yd7llWt29G1wxGcQQJRMZZDORtg96ifkm2Nb"
+  host: ""
+  appKey: ""
+  appSecret: ""
 useSass: true  # 使用saas的话要配置true
 userserver:
   auth: false # 是否开启cybex用户签名
