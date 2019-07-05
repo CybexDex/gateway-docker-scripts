@@ -1,0 +1,34 @@
+database:  # postgres 的连接数据
+  host: localhost
+  port: 5432
+  name: cybex
+  user: cybex
+  pass: 123456
+  type: postgres
+sassserver: # 从saas获取appkey appsecret
+  port: ":8082"
+  host: "http://47.244.248.121:8092"
+  appKey: "TSPAFtyIwONW3UZkrl9Ds5uM"
+  appSecret: "xfNVhvaCcYBS2iFSFroVRgX5Mly8Yd7llWt29G1wxGcQQJRMZZDORtg96ifkm2Nb"
+useSass: true  # 使用saas的话要配置true
+userserver:
+  auth: false # 是否开启cybex用户签名
+  port: ":8182"
+  cor: false # 是否开启跨域
+cybserver:
+  node:  "ws://uatfn.51nebula.com" # cybex 全节点地址
+  blockBegin: -1 # 从哪个cybex block 开始点，-1则从最新
+  expireAuthFail: false  # 过期是否自动fail 
+log:
+  log_dir: ""  # 设置了的话日志会记录到文件
+  log_level: "INFO"
+seed:
+  server: "http://127.0.0.1:8899" # seed 服务器地址
+  cmdkey: "0efee2b9b23f5337fd4b39621e55e0c12f6d7430bde05026db6d19d4b6853de0" # seed cmdkey
+wx:
+  enable: false  # 如果没有企业微信配置这里设置为false
+  corpid: ""
+  corpsecret: ""
+  agentid: 1000000
+  users: ""
+  prefix: "youruniqname"  # 微信通知前缀

@@ -1,0 +1,78 @@
+version: '3.5'
+services:
+  gateway-postgres:
+    image: 'postgres'
+    network_mode: 'bridge'
+    ports:
+      - 5432:5432
+      - 8081:8081
+      - 8182:8182
+      - 3004:80
+      - 3039:3039
+      - 27018:27017
+      - 8899:8899
+    container_name: 'cybex-postgres'
+    volumes:
+      - '/data/db-cybex-postgres/db:/var/lib/postgresql/data/:rw'
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      - POSTGRES_USER=cybex
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=cybex
+  
+  cybex-mongodb:
+    image: 'mongo:3.6'
+    network_mode: 'service:gateway-postgres'
+    container_name: 'cybex-mongodb'
+    restart: on-failure
+    volumes:
+      - '/data/db-cybex-mongo/db:/data/db:rw'
+    healthcheck:
+        test: echo 'db.runCommand("ping").ok' | mongo localhost:27017/test --quiet
+        interval: 30s
+        timeout: 10s
+        retries: 5
+  
+  cybex-seed:
+    image: 'ww8912188/cybex-seed:V1.0.0'
+    container_name: 'cybex-seed'
+    network_mode: 'service:gateway-postgres'
+    restart: on-failure
+    volumes:
+      - '/data/seed-data:/usr/app/data:rw'
+
+  cybex-gateway:
+    image: 'ww8912188/gateway-backend:V2.0.0'
+    network_mode: 'service:gateway-postgres'
+    container_name: 'cybex-gateway'
+    restart: on-failure
+    volumes:
+      - '/data/logs-gateway:/usr/src/app/log'
+      - './gateway.yaml:/usr/src/app/config/dev.yaml'
+    environment:
+        - WAIT_HOSTS=127.0.0.1:5432
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8182/t"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+  
+  cybex-config-server:
+    image: 'ww8912188/cybex-config-server:V1.0.0'
+    network_mode: 'service:gateway-postgres'
+    container_name: 'cybex-config-server'
+    restart: on-failure
+    volumes:
+      - './config-server.js:/usr/src/app/config/config.dev.js'
+
+  cybex-web:
+    image: 'ww8912188/cybex-web:V1.4.0'
+    network_mode: 'service:gateway-postgres'
+    container_name: 'cybex-web'
+    depends_on:
+      - cybex-gateway
+      - cybex-config-server
